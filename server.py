@@ -51,11 +51,16 @@ async def ws_handler(ws):
 async def main():
     # Render выдает порт динамически в переменную окружения PORT
     port = int(os.environ.get("PORT", 8080))
+    
+    # Создаем асинхронное событие, чтобы удерживать сервер запущенным бесконечно
+    stop_event = asyncio.Event()
+    
     # Слушаем на всех интерфейсах 0.0.0.0
     async with websockets.serve(ws_handler, "0.0.0.0", port):
-        print(f"Серверный WebSocket-мост запущен на порту {port}")
-        await asyncio.future()
-
+        print(f"Серверный WebSocket-мост успешно запущен на порту {port}")
+        # Ждем, пока событие не будет вызвано (то есть бесконечно)
+        await stop_event.wait()
 
 if __name__ == "__main__":
     asyncio.run(main())
+
